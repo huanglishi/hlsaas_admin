@@ -4,30 +4,34 @@ import {   h } from 'vue';
 import { Tinymce } from '/@/components/Tinymce/index';
 export const columns: BasicColumn[] = [
   {
-    title: '微站名称',
+    title: 'ID',
+    dataIndex: 'id',
+    width: 50,
+  },
+  {
+    title: '模板名称',
     dataIndex: 'title',
     width: 200,
   },
   {
-    title: '用户信息',
+    title: '添加模板用户',
     dataIndex: 'userinfo',
   },
   {
+    title: '删除模板用户',
+    dataIndex: 'deluser',
+  },
+  {
     title: '预览',
-    dataIndex: 'id',
+    dataIndex: 'cuid',
     width: 90,
   },
   {
-    title: '状态',
-    dataIndex: 'status',
-    width: 120,
-  },
-  {
-    title: '提交时间',
-    dataIndex: 'updatetime',
+    title: '删除时间',
+    dataIndex: 'delTime',
     width: 180,
     customRender: ({ record }) => {
-      const timestamp = record.updatetime;
+      const timestamp = record.delTime;
       if(!timestamp){
           return "---";
       }
@@ -43,30 +47,30 @@ export const columns: BasicColumn[] = [
   },
   {
     title: '备注',
-    dataIndex: 'des',
+    dataIndex: 'details',
   },
 ];
 
 export const searchFormSchema: FormSchema[] = [
   {
     field: 'title',
-    label: '名称',
+    label: '模板名称',
     component: 'Input',
     colProps: { span: 8 },
   },
-  {
-    field: 'status',
-    label: '状态',
-    component: 'Select',
-    componentProps: {
-      options: [
-        { label: '等待审批', value: '1' },
-        { label: '审批通过', value: '2' },
-        { label: '审批未过', value: '3' },
-      ],
-    },
-    colProps: { span: 8 },
-  },
+  // {
+  //   field: 'status',
+  //   label: '状态',
+  //   component: 'Select',
+  //   componentProps: {
+  //     options: [
+  //       { label: '等待审批', value: '1' },
+  //       { label: '审批通过', value: '2' },
+  //       { label: '审批未过', value: '3' },
+  //     ],
+  //   },
+  //   colProps: { span: 8 },
+  // },
 ];
 
 export const schemas: FormSchema[] = [

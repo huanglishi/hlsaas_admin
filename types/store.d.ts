@@ -35,6 +35,7 @@ export interface UserInfo {
   username: string;
   realName: string;
   mwurl: string;
+  tplpreviewurl: string;
   avatar: string;
   desc?: string;
   homePath?: string;

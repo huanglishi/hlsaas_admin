@@ -13,11 +13,15 @@
                 {{statusFont(record.status,'text')}}
              </a-tag>
         </template>
-        <template v-if="column.key === 'userinfo'"  >
+        <template v-if="column.key === 'userinfo'&&record.userinfo"  >
           <div>姓名：{{record.userinfo.name}}</div>
           <div v-if="record.userinfo.mobile">电话：{{record.userinfo.mobile}}</div>
         </template>
-        <template v-if="column.key === 'id'"  >
+        <template v-if="column.key === 'deluser'&&record.deluser"  >
+          <div>姓名：{{record.deluser.name}}</div>
+          <div v-if="record.deluser.mobile">电话：{{record.deluser.mobile}}</div>
+        </template>
+        <template v-if="column.key === 'cuid'"  >
           <a-tag color="success" v-if="record.id" style="user-select:none;" @click="previewWenb(record.id,record['title'])">
               <template #icon>
                 <Icon icon="icon-park-outline:preview-open"></Icon>
@@ -54,7 +58,7 @@
           </div>
         </template>
         <template v-if="column.key === 'action'"  >
-          <a  @click="onApproval(record)">审批</a>
+          <a  @click="onRestore(record)">恢复</a>
         </template>
       </template>
     </BasicTable>
@@ -69,34 +73,35 @@
       :area="['380px', '667px']"
     >
     </s3-layer>
-    <!--审批弹框-->
-    <ApprovalModel @register="registerModal" @success="handleApprovalSuccess" />
   </div>
 </template>
 <script lang="ts">
   import { defineComponent,ref,unref } from 'vue';
   import { BasicTable, useTable, TableAction } from '/@/components/Table';
-  import { getList } from '/@/api/platform/mwebapproval';
+  //API
+  import { getList,restoreTpl } from '/@/api/platform/webtpldel';
   import { columns, searchFormSchema } from './approval.data';
   import { Icon } from '/@/components/Icon';
   import { Popconfirm ,Tag} from 'ant-design-vue';
   import { useUserStore } from '/@/store/modules/user';
   import { QrCode } from '/@/components/Qrcode/index';
-  import { useModal } from '/@/components/Modal';
-  import ApprovalModel from './approvalModel.vue';
+  import { useMessage } from '/@/hooks/web/useMessage';
   export default defineComponent({
-    name: 'RoleManagement',
-    components: { BasicTable, TableAction, Icon,[Popconfirm.name]:Popconfirm,[Tag.name]:Tag,QrCode,ApprovalModel},
+    name: 'webtpldel',
+    components: { BasicTable, TableAction, Icon,[Popconfirm.name]:Popconfirm,[Tag.name]:Tag,QrCode},
     setup() {
+          //提示
+          const {
+        createConfirm,createMessage
+      } = useMessage();
       const siteqrCodeUrl=ref("")//整个站点页面
       const iframedata=ref({
         show:false,
         content:"",
         title:"",
       })
-      const [registerModal, { openModal }] = useModal();
       const [registerTable, { reload }] = useTable({
-        title: '审批数据列表',
+        title: '轻站模板回收站',
         api: getList,
         rowKey: 'id',
         columns,
@@ -107,7 +112,7 @@
         useSearchForm: true,
         showTableSetting: true,
         bordered: true,
-        showIndexColumn: true,
+        showIndexColumn: false,
         actionColumn: {
           width: 80,
           title: '操作',
@@ -131,12 +136,24 @@
       function handleDelete(record: Recordable) {
         console.log(record);
       }
-      //审批
-      function onApproval(record: Recordable) {
-        openModal(true, {
-          record,
-          isUpdate: true,
-        });
+      //恢复
+      function onRestore(record: Recordable) {
+        createConfirm({
+            iconType: "info",
+            title: '您确定恢复该模板吗?',
+            content: '恢复后将在C端模板库显示。',
+            okText:"使用",
+            onOk:(async()=>{
+              createMessage.loading({ content: '恢复中...', key:"restoreTpl",duration:0});
+              const resultdata = await restoreTpl({id:record.id});
+              if(resultdata){
+                reload()
+                createMessage.success({ content: '恢复成功！', key:"restoreTpl", duration: 2 });
+              }else {
+                createMessage.error({ content: '恢复失败', key:"restoreTpl", duration: 2 });
+              }
+            }),
+          });
       }
       //用户信息
       const userStore = useUserStore();
@@ -145,13 +162,13 @@
     function previewWenb(id,title){
         iframedata.value={
             show:true,
-            content:`${unref(tplpreviewurl)}?id=${id}`,
+            content:`${unref(tplpreviewurl)}?tplId=${id}`,
             title:title,
           }
       }
     //真机
      function relphone(id){
-        siteqrCodeUrl.value=`${unref(tplpreviewurl)}?id=${id}`
+        siteqrCodeUrl.value=`${unref(tplpreviewurl)}?tplId=${id}`
       }
       //状态
       function statusFont(status,type){
@@ -182,10 +199,10 @@
         handleCreate,
         handleEdit,
         handleDelete,
-        onApproval,
+        onRestore,
         iframedata,previewWenb,
         siteqrCodeUrl,relphone,
-        handleApprovalSuccess,registerModal,statusFont,
+        handleApprovalSuccess,statusFont,
       };
     },
   });

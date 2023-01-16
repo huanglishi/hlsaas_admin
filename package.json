@@ -45,6 +45,8 @@
     "@zxcvbn-ts/core": "^2.0.1",
     "ant-design-vue": "^3.2.0",
     "axios": "^0.26.1",
+    "browserslist": "^4.21.4",
+    "caniuse-lite": "^1.0.30001442",
     "codemirror": "^5.65.3",
     "cropperjs": "^1.5.12",
     "crypto-js": "^4.1.1",
