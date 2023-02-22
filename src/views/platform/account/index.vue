@@ -19,6 +19,11 @@
                 tooltip: '编辑用户资料',
                 onClick: handleEdit.bind(null, record),
               },
+              {
+                icon: 'ant-design:login-outlined',
+                tooltip: '登录B端账号',
+                onClick: handleView.bind(null, record),
+              },
                {
                 icon: 'line-md:alert-circle',
                 tooltip: '查看用户详情',
@@ -91,7 +96,7 @@
           return info;
         },
         actionColumn: {
-          width: 145,
+          width: 155,
           title: '操作',
           dataIndex: 'action',
           // slots: { customRender: 'action' },

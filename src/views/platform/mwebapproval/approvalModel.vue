@@ -65,7 +65,7 @@
         isUpdate.value = !!data?.isUpdate;
         if (unref(isUpdate)) {
           setFieldsValue({
-            status:data.record.status==1?3:data.record.status,
+            status:data.record.status,
             approval_err:data.record.approval_err,
           });
           Id.value=data.record.id
@@ -91,6 +91,8 @@
             createMessage.success({ content: '审批提交成功！', key:"saveTpl", duration: 2 });
             closeModal();
             emit('success', { isUpdate: unref(isUpdate), values: { ...values, id: Id.value } });
+          }else{
+            createMessage.warning({ content: '未更新状态', key:"saveTpl", duration: 2 });
           }
         } finally {
           setModalProps({ confirmLoading: false });

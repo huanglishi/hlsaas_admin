@@ -58,11 +58,12 @@ export const searchFormSchema: FormSchema[] = [
     field: 'status',
     label: '状态',
     component: 'Select',
+    defaultValue: 1,
     componentProps: {
       options: [
-        { label: '等待审批', value: '1' },
-        { label: '审批通过', value: '2' },
-        { label: '审批未过', value: '3' },
+        { label: '等待审批', value: 1 },
+        { label: '审批通过', value: 2 },
+        { label: '审批未过', value: 3 },
       ],
     },
     colProps: { span: 8 },
@@ -72,18 +73,17 @@ export const searchFormSchema: FormSchema[] = [
 export const schemas: FormSchema[] = [
   {
     field: 'status',
-    component: 'Switch',
-    label: '审批结果',
+    label: '审批状态',
+    component: 'RadioGroup',
+    defaultValue: 1,
     componentProps: {
-      checkedChildren: "通过",
-      unCheckedChildren: "不过",
-      unCheckedValue: 3,
-      checkedValue: 2,
+      options: [
+        { label: '等待审核', value:1 },
+        { label: '审核通过(发布)', value: 2 },
+        { label: '审核失败(未发布)', value: 3 },
+      ],
     },
-    defaultValue:3,
-    colProps: {
-      span: 24,
-    },
+    required: true,
   },
   {
     field: 'approval_err',
@@ -93,7 +93,7 @@ export const schemas: FormSchema[] = [
       span: 24,
     },
     show: ({ values }) => {
-      return values.status==3||values.status==1;
+      return values.status==3;
     },
     render: ({ model, field }) => {
       return h(Tinymce, {

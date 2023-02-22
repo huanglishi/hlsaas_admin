@@ -34,7 +34,6 @@
       const pagedata = ref({name:"",content:""});
       // const {createMessage,createSuccessModal} = useMessage();
       const [registerModal, { setModalProps ,closeModal}] = useModalInner(async (data) => {
-        console.log("日志：",data)
         setModalProps({ confirmLoading: false });
         pagedata.value = await getDetail({id:data.id});
       });
